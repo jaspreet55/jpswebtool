@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPSWEBTOOL - Professional Image Processing Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+    
+    
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-tools text-2xl text-blue-600"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">JPSWebTool</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="desktop-menu flex items-center space-x-2">
+                    <button class="nav-item active px-4 py-2 rounded-lg text-sm font-medium" onclick="showTool('compression')">
+                        <i class="fas fa-compress-alt mr-2"></i>Compression
+                    </button>
+                    <button class="nav-item px-4 py-2 rounded-lg text-sm font-medium" onclick="showTool('crop')">
+                        <i class="fas fa-crop-alt mr-2"></i>Crop
+                    </button>
+                    <button class="nav-item px-4 py-2 rounded-lg text-sm font-medium" onclick="showTool('converter')">
+                        <i class="fas fa-exchange-alt mr-2"></i>Convert
+                    </button>
+                    <button class="nav-item px-4 py-2 rounded-lg text-sm font-medium" onclick="showTool('palette')">
+                        <i class="fas fa-palette mr-2"></i>Palette
+                    </button>
+                    
+                    <!-- More Tools Dropdown -->
+                    <div class="dropdown">
+                        <button class="nav-item px-4 py-2 rounded-lg text-sm font-medium flex items-center" onclick="toggleDropdown()">
+                            <i class="fas fa-ellipsis-h mr-2"></i>More Tools
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="dropdown-content" class="dropdown-content">
+                            <a href="#" class="dropdown-item" onclick="showTool('qr')">
+                                <i class="fas fa-qrcode mr-2"></i>QR Code Generator
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showTool('resize')">
+                                <i class="fas fa-expand-arrows-alt mr-2"></i>Image Resizer
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showTool('text2image')">
+                                <i class="fas fa-font mr-2"></i>Text to Image
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="showTool('base64')">
+                                <i class="fas fa-code mr-2"></i>Base64 Encoder
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <div class="mobile-menu">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobileMenu" class="mobile-menu hidden pb-4">
+                <div class="grid grid-cols-2 gap-2">
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('compression')">
+                        <i class="fas fa-compress-alt mr-2"></i>Compression
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('crop')">
+                        <i class="fas fa-crop-alt mr-2"></i>Crop
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('converter')">
+                        <i class="fas fa-exchange-alt mr-2"></i>Convert
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('palette')">
+                        <i class="fas fa-palette mr-2"></i>Palette
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('qr')">
+                        <i class="fas fa-qrcode mr-2"></i>QR Code
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('resize')">
+                        <i class="fas fa-expand-arrows-alt mr-2"></i>Resize
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('text2image')">
+                        <i class="fas fa-font mr-2"></i>Text2Image
+                    </button>
+                    <button class="nav-item px-3 py-2 rounded-lg text-sm font-medium text-left" onclick="showTool('base64')">
+                        <i class="fas fa-code mr-2"></i>Base64
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Image Compression Tool -->
+        <section id="compression" class="tool-section active fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-compress-alt mr-3 text-blue-600"></i>Image Compression
+                    </h2>
+                    <p class="text-gray-600">Compress multiple images while maintaining quality</p>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="mb-8">
+                    <div class="drag-drop-area border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors" onclick="document.getElementById('compressionInput').click()">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-700 text-lg">Click to upload images (Max 6 files)</p>
+                        <p class="text-gray-500 text-sm mt-2">Supported: JPG, PNG, WebP</p>
+                    </div>
+                    <input type="file" id="compressionInput" multiple accept="image/*" class="hidden">
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="compressionProgress" class="hidden mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-600">Processing Images</span>
+                        <span id="progressText" class="text-sm text-gray-600">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gray-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-gray-800" id="totalFiles">0</div>
+                        <div class="text-gray-600">Total Files</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-gray-800" id="processedFiles">0</div>
+                        <div class="text-gray-600">Processed</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-gray-800" id="totalSaved">0%</div>
+                        <div class="text-gray-600">Space Saved</div>
+                    </div>
+                </div>
+
+                <!-- Image Grid -->
+                <div id="compressionGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"></div>
+
+                <!-- Batch Controls -->
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <button id="compressAllBtn" class="btn-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                        <i class="fas fa-compress-alt mr-2"></i>Compress All
+                    </button>
+                    <button id="downloadAllBtn" class="btn-success hover:bg-green-700 text-white px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                        <i class="fas fa-download mr-2"></i>Download All
+                    </button>
+                    <button id="clearAllBtn" class="btn-danger hover:bg-red-700 text-white px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                        <i class="fas fa-trash mr-2"></i>Clear All
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Crop Tool -->
+        <section id="crop" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-crop-alt mr-3 text-blue-600"></i>Image Crop
+                    </h2>
+                    <p class="text-gray-600">Crop your images with precision</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Canvas Area -->
+                    <div class="lg:col-span-2">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors mb-4" onclick="document.getElementById('cropInput').click()">
+                            <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-700 text-lg">Click to upload image</p>
+                        </div>
+                        <input type="file" id="cropInput" accept="image/*" class="hidden">
+                        <div id="cropCanvasContainer" class="text-center hidden">
+                            <canvas id="cropCanvas" class="image-preview"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-bold text-gray-800 mb-4">
+                                <i class="fas fa-sliders-h mr-2"></i>Crop Settings
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Aspect Ratio</label>
+                                    <select id="aspectRatio" class="w-full p-2 border rounded-lg">
+                                        <option value="free">Free</option>
+                                        <option value="1:1">Square (1:1)</option>
+                                        <option value="16:9">Widescreen (16:9)</option>
+                                        <option value="4:3">Standard (4:3)</option>
+                                        <option value="3:2">Photo (3:2)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Width: <span id="cropWidth">0</span>px</label>
+                                    <input type="range" id="widthSlider" min="50" max="1000" value="300" class="w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Height: <span id="cropHeight">0</span>px</label>
+                                    <input type="range" id="heightSlider" min="50" max="1000" value="300" class="w-full">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-bold text-gray-800 mb-4">
+                                <i class="fas fa-tools mr-2"></i>Actions
+                            </h3>
+                            <div class="space-y-3">
+                                <button id="cropBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-crop-alt mr-2"></i>Crop Image
+                                </button>
+                                <button id="resetCropBtn" class="btn-dark hover:bg-gray-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-undo mr-2"></i>Reset
+                                </button>
+                                <button id="downloadCropBtn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-download mr-2"></i>Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Format Converter -->
+        <section id="converter" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-exchange-alt mr-3 text-blue-600"></i>Format Converter
+                    </h2>
+                    <p class="text-gray-600">Convert images between different formats with advanced options</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors mb-4" onclick="document.getElementById('converterInput').click()">
+                            <i class="fas fa-file-image text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-700 text-lg">Click to upload image</p>
+                            <p class="text-gray-500 text-sm mt-2">Supports: JPG, PNG, WebP, GIF, BMP, TIFF</p>
+                        </div>
+                        <input type="file" id="converterInput" accept="image/*" class="hidden">
+                        
+                        <div class="bg-gray-50 rounded-lg p-4 mt-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Convert Settings</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Output Format</label>
+                                    <div class="format-grid">
+                                        <div class="format-option" data-format="png">
+                                            <i class="fas fa-file-image text-2xl text-blue-600 mb-2"></i>
+                                            <div class="font-bold">PNG</div>
+                                            <div class="text-xs text-gray-500">Lossless</div>
+                                        </div>
+                                        <div class="format-option selected" data-format="jpg">
+                                            <i class="fas fa-file-image text-2xl text-green-600 mb-2"></i>
+                                            <div class="font-bold">JPG</div>
+                                            <div class="text-xs text-gray-500">Compressed</div>
+                                        </div>
+                                        <div class="format-option" data-format="webp">
+                                            <i class="fas fa-file-image text-2xl text-purple-600 mb-2"></i>
+                                            <div class="font-bold">WebP</div>
+                                            <div class="text-xs text-gray-500">Modern</div>
+                                        </div>
+                                        <div class="format-option" data-format="gif">
+                                            <i class="fas fa-file-image text-2xl text-yellow-600 mb-2"></i>
+                                            <div class="font-bold">GIF</div>
+                                            <div class="text-xs text-gray-500">Animated</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="qualityContainer">
+                                    <label class="block text-gray-700 mb-2">Quality</label>
+                                    <div class="quality-preview mb-2">
+                                        <div id="qualityIndicator" class="quality-indicator quality-high"></div>
+                                        <span id="convertQuality">90</span>%
+                                        <span id="qualityLabel" class="text-sm text-gray-500">High Quality</span>
+                                    </div>
+                                    <input type="range" id="qualitySlider" min="10" max="100" value="90" class="w-full">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Resize</label>
+                                        <select id="resizeOption" class="w-full p-2 border rounded-lg">
+                                            <option value="none">Keep Original</option>
+                                            <option value="50">50% Size</option>
+                                            <option value="75">75% Size</option>
+                                            <option value="custom">Custom Size</option>
+                                        </select>
+                                    </div>
+                                    <div id="customSizeContainer" class="hidden">
+                                        <label class="block text-gray-700 mb-2">Max Width</label>
+                                        <input type="number" id="maxWidth" placeholder="Width" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <button id="convertBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-exchange-alt mr-2"></i>Convert Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="convertPreview" class="border-2 border-gray-300 rounded-lg p-8 text-center min-h-64 flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <i class="fas fa-image text-4xl mb-4"></i>
+                                <p>Converted image will appear here</p>
+                            </div>
+                        </div>
+                        <div id="convertInfo" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold text-gray-800 mb-2">Conversion Results</h4>
+                            <div id="conversionStats" class="space-y-1 text-sm text-gray-600"></div>
+                        </div>
+                        <div id="convertActions" class="hidden mt-4">
+                            <button id="downloadConvertBtn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg">
+                                <i class="fas fa-download mr-2"></i>Download Converted Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Color Palette Extractor -->
+        <section id="palette" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-palette mr-3 text-blue-600"></i>Color Palette Extractor
+                    </h2>
+                    <p class="text-gray-600">Extract dominant colors from any image</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors mb-4" onclick="document.getElementById('paletteInput').click()">
+                            <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-700 text-lg">Click to upload image</p>
+                        </div>
+                        <input type="file" id="paletteInput" accept="image/*" class="hidden">
+                        
+                        <div id="paletteImagePreview" class="hidden">
+                            <img id="paletteImage" class="image-preview mx-auto" alt="Uploaded image">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Settings</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Number of Colors: <span id="colorCount">5</span></label>
+                                    <input type="range" id="colorCountSlider" min="2" max="10" value="5" class="w-full">
+                                </div>
+                                <button id="extractColorsBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-palette mr-2"></i>Extract Colors
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="colorPalette" class="hidden">
+                            <h3 class="font-bold text-gray-800 mb-4">Extracted Colors</h3>
+                            <div id="colorGrid" class="grid grid-cols-5 gap-3 mb-4"></div>
+                            <div id="colorDetails" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QR Code Generator -->
+        <section id="qr" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-qrcode mr-3 text-blue-600"></i>QR Code Generator
+                    </h2>
+                    <p class="text-gray-600">Generate QR codes for text, URLs, and more</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-gray-800 mb-4">QR Code Settings</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Content Type</label>
+                                    <select id="qrType" class="w-full p-2 border rounded-lg">
+                                        <option value="text">Text</option>
+                                        <option value="url">URL</option>
+                                        <option value="email">Email</option>
+                                        <option value="phone">Phone</option>
+                                        <option value="wifi">WiFi</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Content</label>
+                                    <textarea id="qrContent" placeholder="Enter text or URL" class="w-full p-2 border rounded-lg h-24 resize-none"></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Size</label>
+                                        <select id="qrSize" class="w-full p-2 border rounded-lg">
+                                            <option value="256">256x256</option>
+                                            <option value="512">512x512</option>
+                                            <option value="1024">1024x1024</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Error Level</label>
+                                        <select id="qrErrorLevel" class="w-full p-2 border rounded-lg">
+                                            <option value="L">Low</option>
+                                            <option value="M">Medium</option>
+                                            <option value="Q">Quartile</option>
+                                            <option value="H">High</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Color</label>
+                                        <input type="color" id="qrColor" value="#000000" class="w-full p-1 border rounded-lg h-10">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Background</label>
+                                        <input type="color" id="qrBackground" value="#ffffff" class="w-full p-1 border rounded-lg h-10">
+                                    </div>
+                                </div>
+                                <button id="generateQRBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-qrcode mr-2"></i>Generate QR Code
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="qrPreview" class="border-2 border-gray-300 rounded-lg p-8 text-center min-h-64 flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <i class="fas fa-qrcode text-4xl mb-4"></i>
+                                <p>QR Code will appear here</p>
+                            </div>
+                        </div>
+                        <div id="qrActions" class="hidden mt-4">
+                            <button id="downloadQRBtn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg">
+                                <i class="fas fa-download mr-2"></i>Download QR Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Resizer -->
+        <section id="resize" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-expand-arrows-alt mr-3 text-blue-600"></i>Image Resizer
+                    </h2>
+                    <p class="text-gray-600">Resize images to specific dimensions</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors mb-4" onclick="document.getElementById('resizeInput').click()">
+                            <i class="fas fa-image text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-700 text-lg">Click to upload image</p>
+                        </div>
+                        <input type="file" id="resizeInput" accept="image/*" class="hidden">
+                        
+                        <div class="bg-gray-50 rounded-lg p-4 mt-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Resize Settings</h3>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Width</label>
+                                        <input type="number" id="resizeWidth" placeholder="Width" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Height</label>
+                                        <input type="number" id="resizeHeight" placeholder="Height" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="flex items-center text-gray-700">
+                                        <input type="checkbox" id="maintainAspect" checked class="mr-2">
+                                        Maintain aspect ratio
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Preset Sizes</label>
+                                    <select id="presetSizes" class="w-full p-2 border rounded-lg">
+                                        <option value="">Custom</option>
+                                        <option value="1920x1080">1920x1080 (Full HD)</option>
+                                        <option value="1280x720">1280x720 (HD)</option>
+                                        <option value="800x600">800x600 (SVGA)</option>
+                                        <option value="640x480">640x480 (VGA)</option>
+                                        <option value="400x400">400x400 (Square)</option>
+                                    </select>
+                                </div>
+                                <button id="resizeBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-expand-arrows-alt mr-2"></i>Resize Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="resizePreview" class="border-2 border-gray-300 rounded-lg p-8 text-center min-h-64 flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <i class="fas fa-image text-4xl mb-4"></i>
+                                <p>Resized image will appear here</p>
+                            </div>
+                        </div>
+                        <div id="resizeInfo" class="hidden mt-4 text-sm text-gray-600"></div>
+                        <div id="resizeActions" class="hidden mt-4">
+                            <button id="downloadResizeBtn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg">
+                                <i class="fas fa-download mr-2"></i>Download Resized Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Text to Image -->
+        <section id="text2image" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-font mr-3 text-blue-600"></i>Text to Image
+                    </h2>
+                    <p class="text-gray-600">Convert text to image with custom styling</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Text Settings</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Text</label>
+                                    <textarea id="textContent" placeholder="Enter your text here..." class="w-full p-2 border rounded-lg h-24 resize-none"></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Font Size</label>
+                                        <input type="number" id="fontSize" value="48" min="12" max="200" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Font Family</label>
+                                        <select id="fontFamily" class="w-full p-2 border rounded-lg">
+                                            <option value="Arial">Arial</option>
+                                            <option value="Helvetica">Helvetica</option>
+                                            <option value="Times New Roman">Times New Roman</option>
+                                            <option value="Courier New">Courier New</option>
+                                            <option value="Georgia">Georgia</option>
+                                            <option value="Verdana">Verdana</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Text Color</label>
+                                        <input type="color" id="textColor" value="#000000" class="w-full p-1 border rounded-lg h-10">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 mb-2">Background Color</label>
+                                        <input type="color" id="bgColor" value="#ffffff" class="w-full p-1 border rounded-lg h-10">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Text Alignment</label>
+                                    <select id="textAlign" class="w-full p-2 border rounded-lg">
+                                        <option value="left">Left</option>
+                                        <option value="center">Center</option>
+                                        <option value="right">Right</option>
+                                    </select>
+                                </div>
+                                <button id="generateTextBtn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                    <i class="fas fa-font mr-2"></i>Generate Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="textImagePreview" class="border-2 border-gray-300 rounded-lg p-8 text-center min-h-64 flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <i class="fas fa-image text-4xl mb-4"></i>
+                                <p>Generated image will appear here</p>
+                            </div>
+                        </div>
+                        <div id="textImageActions" class="hidden mt-4">
+                            <button id="downloadTextBtn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg">
+                                <i class="fas fa-download mr-2"></i>Download Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Base64 Encoder/Decoder -->
+        <section id="base64" class="tool-section fade-in">
+            <div class="bg-white rounded-xl shadow-lg border p-6 lg:p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-code mr-3 text-blue-600"></i>Base64 Encoder/Decoder
+                    </h2>
+                    <p class="text-gray-600">Convert images to Base64 and vice versa</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Image to Base64</h3>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors mb-4" onclick="document.getElementById('base64Input').click()">
+                                <i class="fas fa-image text-3xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-700">Click to upload image</p>
+                            </div>
+                            <input type="file" id="base64Input" accept="image/*" class="hidden">
+                            <textarea id="base64Output" placeholder="Base64 output will appear here..." class="w-full p-2 border rounded-lg h-32 resize-none" readonly></textarea>
+                            <button id="copyBase64Btn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg mt-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                <i class="fas fa-copy mr-2"></i>Copy Base64
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-gray-800 mb-4">Base64 to Image</h3>
+                            <textarea id="base64Input2" placeholder="Paste Base64 string here..." class="w-full p-2 border rounded-lg h-32 resize-none"></textarea>
+                            <button id="decodeBase64Btn" class="btn-primary hover:bg-blue-700 w-full text-white py-2 rounded-lg mt-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                                <i class="fas fa-decode mr-2"></i>Decode to Image
+                            </button>
+                        </div>
+                        <div id="base64ImagePreview" class="border-2 border-gray-300 rounded-lg p-8 text-center min-h-64 flex items-center justify-center">
+                            <div class="text-gray-400">
+                                <i class="fas fa-image text-4xl mb-4"></i>
+                                <p>Decoded image will appear here</p>
+                            </div>
+                        </div>
+                        <div id="base64ImageActions" class="hidden mt-4">
+                            <button id="downloadBase64Btn" class="btn-success hover:bg-green-700 w-full text-white py-2 rounded-lg">
+                                <i class="fas fa-download mr-2"></i>Download Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 border-t py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center items-center mb-4">
+                <i class="fas fa-tools text-2xl mr-2 text-blue-600"></i>
+                <span class="text-xl font-bold text-gray-800">JPSWebTool</span>
+            </div>
+            <p class="text-gray-600 mb-4">Professional image processing tools for all your needs</p>
+            <div class="flex justify-center space-x-6 text-sm text-gray-500">
+                <a href="#" class="hover:text-blue-600 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-blue-600 transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-blue-600 transition-colors">Contact</a>
+            </div>
+            <p class="text-gray-500 text-sm mt-4">© 2025 JPSWebTool. All rights reserved.</p>
+        </div>
+    </footer>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="./script.js"></script>
+    
+</body>
+</html>
