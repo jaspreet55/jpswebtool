@@ -661,62 +661,62 @@
         }
 
         // QR Code Generator - Fixed
-        document.getElementById('qrContent').addEventListener('input', function() {
-            document.getElementById('generateQRBtn').disabled = this.value.trim() === '';
-        });
+        // document.getElementById('qrContent').addEventListener('input', function() {
+        //     document.getElementById('generateQRBtn').disabled = this.value.trim() === '';
+        // });
 
-        document.getElementById('generateQRBtn').addEventListener('click', function() {
-            const content = document.getElementById('qrContent').value;
-            const size = parseInt(document.getElementById('qrSize').value);
-            const errorLevel = document.getElementById('qrErrorLevel').value;
-            const color = document.getElementById('qrColor').value;
-            const background = document.getElementById('qrBackground').value;
+        // document.getElementById('generateQRBtn').addEventListener('click', function() {
+        //     const content = document.getElementById('qrContent').value;
+        //     const size = parseInt(document.getElementById('qrSize').value);
+        //     const errorLevel = document.getElementById('qrErrorLevel').value;
+        //     const color = document.getElementById('qrColor').value;
+        //     const background = document.getElementById('qrBackground').value;
             
-            generateQRCode(content, size, errorLevel, color, background);
-        });
+        //     generateQRCode(content, size, errorLevel, color, background);
+        // });
 
-        function generateQRCode(content, size, errorLevel, color, background) {
-            const canvas = document.createElement('canvas');
+        // function generateQRCode(content, size, errorLevel, color, background) {
+        //     const canvas = document.createElement('canvas');
             
-            // Enhanced QR code generation with proper error handling
-            try {
-                QRCode.toCanvas(canvas, content, {
-                    width: size,
-                    height: size,
-                    errorCorrectionLevel: errorLevel,
-                    color: {
-                        dark: color,
-                        light: background
-                    },
-                    margin: 2
-                }, function(error) {
-                    if (error) {
-                        console.error('QR Code generation error:', error);
-                        alert('Error generating QR code. Please try again.');
-                        return;
-                    }
+        //     // Enhanced QR code generation with proper error handling
+        //     try {
+        //         QRCode.toCanvas(canvas, content, {
+        //             width: size,
+        //             height: size,
+        //             errorCorrectionLevel: errorLevel,
+        //             color: {
+        //                 dark: color,
+        //                 light: background
+        //             },
+        //             margin: 2
+        //         }, function(error) {
+        //             if (error) {
+        //                 console.error('QR Code generation error:', error);
+        //                 alert('Error generating QR code. Please try again.');
+        //                 return;
+        //             }
                     
-                    const preview = document.getElementById('qrPreview');
-                    preview.innerHTML = '';
-                    preview.appendChild(canvas);
+        //             const preview = document.getElementById('qrPreview');
+        //             preview.innerHTML = '';
+        //             preview.appendChild(canvas);
                     
-                    document.getElementById('qrActions').classList.remove('hidden');
-                    document.getElementById('downloadQRBtn').onclick = function() {
-                        canvas.toBlob(function(blob) {
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'qrcode.png';
-                            a.click();
-                            URL.revokeObjectURL(url);
-                        });
-                    };
-                });
-            } catch (error) {
-                console.error('QR Code error:', error);
-                alert('Error generating QR code. Please check your input.');
-            }
-        }
+        //             document.getElementById('qrActions').classList.remove('hidden');
+        //             document.getElementById('downloadQRBtn').onclick = function() {
+        //                 canvas.toBlob(function(blob) {
+        //                     const url = URL.createObjectURL(blob);
+        //                     const a = document.createElement('a');
+        //                     a.href = url;
+        //                     a.download = 'qrcode.png';
+        //                     a.click();
+        //                     URL.revokeObjectURL(url);
+        //                 });
+        //             };
+        //         });
+        //     } catch (error) {
+        //         console.error('QR Code error:', error);
+        //         alert('Error generating QR code. Please check your input.');
+        //     }
+        // }
 
         // Image Resizer
         document.getElementById('resizeInput').addEventListener('change', function(e) {
@@ -923,3 +923,196 @@
 
         // Initialize
         updateCompressionStats();
+const els = {
+  type: document.getElementById('qrType'),
+  textBlock: document.getElementById('qrTextBlock'),
+  content: document.getElementById('qrContent'),
+  imgBlock: document.getElementById('qrImageBlock'),
+  imgCard: document.getElementById('qrImageCard'),
+  imgInput: document.getElementById('qrImageInput'),
+  imgPreviewWrap: document.getElementById('qrImagePreviewWrap'),
+  imgPreview: document.getElementById('qrImagePreview'),
+  size: document.getElementById('qrSize'),
+  color: document.getElementById('qrColor'),
+  bg: document.getElementById('qrBackground'),
+  gen: document.getElementById('generateQRBtn'),
+  preview: document.getElementById('qrPreview'),
+  actions: document.getElementById('qrActions'),
+  dl: document.getElementById('downloadQRBtn'),
+  err: document.getElementById('qrError')
+};
+
+els.type.addEventListener('change', () => {
+  const isImage = els.type.value === 'image';
+  els.textBlock.classList.toggle('hidden', isImage);
+  els.imgBlock.classList.toggle('hidden', !isImage);
+  els.content.value = isImage ? '' : els.content.value;
+  els.err.classList.add('hidden');
+  updateGenerateEnabled();
+});
+
+els.content.addEventListener('input', updateGenerateEnabled);
+els.size.addEventListener('change', updateGenerateEnabled);
+els.imgCard.addEventListener('click', () => els.imgInput.click());
+els.imgInput.addEventListener('change', () => {
+  els.err.classList.add('hidden');
+  if (els.imgInput.files && els.imgInput.files[0]) {
+    const url = URL.createObjectURL(els.imgInput.files[0]);
+    els.imgPreview.src = url;
+    els.imgPreviewWrap.classList.remove('hidden');
+  } else {
+    els.imgPreviewWrap.classList.add('hidden');
+  }
+  updateGenerateEnabled();
+});
+
+function updateGenerateEnabled() {
+  const t = els.type.value;
+  let ok = false;
+  if (t === 'image') {
+    ok = !!(els.imgInput.files && els.imgInput.files.length);
+  } else {
+    ok = els.content.value.trim().length > 0;
+  }
+  els.gen.disabled = !ok;
+}
+
+els.gen.addEventListener('click', async () => {
+  if (typeof QRCode === 'undefined') {
+    alert('QR Code library is missing.');
+    return;
+  }
+
+  els.err.classList.add('hidden');
+  const t = els.type.value;
+  let payload = '';
+  const size = parseInt(els.size.value, 10);
+  const color = els.color.value;
+  const background = els.bg.value;
+
+  const originalBtnHTML = els.gen.innerHTML;
+  els.gen.disabled = true;
+  els.gen.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+
+  try {
+    if (t === 'text') {
+      payload = els.content.value.trim();
+    } else if (t === 'url') {
+      payload = els.content.value.trim();
+      if (payload && !/^https?:\/\//i.test(payload)) payload = 'https://' + payload;
+    } else {
+      const file = els.imgInput.files[0];
+      payload = await imageFileToDataURLForQR(file);
+    }
+
+    const errorLevel = (t === 'image') ? 'L' : 'M';
+    await generateQRCode(payload, size, errorLevel, color, background);
+  } catch (e) {
+    console.error(e);
+    showError(e.message || 'Error generating QR code.');
+  } finally {
+    els.gen.disabled = false;
+    els.gen.innerHTML = originalBtnHTML;
+  }
+});
+
+function showError(msg) {
+  els.err.textContent = msg;
+  els.err.classList.remove('hidden');
+}
+
+async function imageFileToDataURLForQR(file) {
+  const MAX_CHARS = 3000;
+  let maxDim = 200;
+  let quality = 0.65;
+
+  for (let i = 0; i < 10; i++) {
+    const dataUrl = await resizeImageToDataURL(file, maxDim, quality);
+    const base64Data = dataUrl.split(',')[1];
+    if (base64Data.length <= MAX_CHARS) return dataUrl;
+
+    if (maxDim > 80) {
+      maxDim = Math.max(80, Math.round(maxDim * 0.8));
+    } else if (quality > 0.3) {
+      quality = Math.max(0.3, +(quality - 0.1).toFixed(2));
+    } else {
+      break;
+    }
+  }
+  throw new Error('Image is too large. Try a smaller one or use URL mode.');
+}
+
+function resizeImageToDataURL(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error('Failed to read image.'));
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const { width, height } = fitWithin(img.width, img.height, maxDim);
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        try {
+          const url = canvas.toDataURL('image/jpeg', quality);
+          resolve(url);
+        } catch (e) {
+          reject(new Error('Failed to compress image.'));
+        }
+      };
+      img.onerror = () => reject(new Error('Invalid image file.'));
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function fitWithin(w, h, maxDim) {
+  const scale = Math.min(maxDim / w, maxDim / h, 1);
+  return {
+    width: Math.max(1, Math.round(w * scale)),
+    height: Math.max(1, Math.round(h * scale))
+  };
+}
+
+function generateQRCode(content, size, errorLevel, color, background) {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    QRCode.toCanvas(
+      canvas,
+      content,
+      {
+        width: size,
+        errorCorrectionLevel: errorLevel,
+        color: { dark: color, light: background },
+        margin: 2
+      },
+      (err) => {
+        if (err) {
+          if (String(err).toLowerCase().includes('code length overflow')) {
+            reject(new Error('Data too large for one QR code.'));
+          } else {
+            reject(err);
+          }
+          return;
+        }
+        els.preview.innerHTML = '';
+        els.preview.appendChild(canvas);
+        els.actions.classList.remove('hidden');
+        els.dl.onclick = () => {
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qrcode.png';
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+        };
+        resolve();
+      }
+    );
+  });
+}
